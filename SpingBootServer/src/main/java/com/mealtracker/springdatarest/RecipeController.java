@@ -1,5 +1,6 @@
 package com.mealtracker.springdatarest;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URLEncoder;
@@ -8,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
+import javax.servlet.FilterChain;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.WebTarget;
@@ -18,10 +23,12 @@ import org.glassfish.jersey.client.JerseyClientBuilder;
 import org.glassfish.jersey.client.JerseyWebTarget;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
@@ -33,6 +40,26 @@ import com.google.cloud.firestore.WriteResult;
 
 @RestController
 public class RecipeController {
+	
+	@Component
+	public class CorsFilter extends OncePerRequestFilter {
+
+	    @Override
+	    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
+	                                    final FilterChain filterChain) throws ServletException, IOException {
+	        response.addHeader("Access-Control-Allow-Origin", "*");
+	        response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, HEAD, OPTIONS");
+	        response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+	        response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials");
+	        response.addHeader("Access-Control-Allow-Credentials", "true");
+	        response.addIntHeader("Access-Control-Max-Age", 10);
+	        filterChain.doFilter(request, response);
+	    }
+	}
+	
+	
+	
+	
 
 	JerseyClient client = JerseyClientBuilder.createClient();
 
