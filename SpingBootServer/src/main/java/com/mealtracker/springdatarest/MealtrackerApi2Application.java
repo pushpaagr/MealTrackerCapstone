@@ -26,7 +26,8 @@ public class MealtrackerApi2Application {
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 		InputStream accessKey = MealtrackerApi2Application.class.getResourceAsStream("firebasejson.json"); 
 			
-		FirebaseOptions options = new FirebaseOptions.Builder()
+		FirestoreOptions options = 
+FirestoreOptions.newBuilder().setTimestampsInSnapshotsEnabled(true).build();
 		    .setCredentials(GoogleCredentials.fromStream(accessKey))
 		    .setProjectId("mealplannercapst-1546462212187")
 		    .setDatabaseUrl("https://mealplannercapst-1546462212187.firebaseio.com")
