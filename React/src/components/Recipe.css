@@ -7,7 +7,10 @@
 
 .item-list_container {
   border-style: solid;
+  border-color: green;
+}
+
+.item-list_container .item__button{
+  border-style: solid;
   border-color: red;
-
-
 }

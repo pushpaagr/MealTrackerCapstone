@@ -3,6 +3,7 @@ import axios from 'axios';
 import Home from './Home';
 import Recipes from './Recipes';
 
+
 class Dashboard extends Component {
   constructor() {
     super();
@@ -60,7 +61,9 @@ class Dashboard extends Component {
             </form>
           </nav>
 
-          <Recipes recipeList={this.state.result} />
+          <Recipes
+            recipeList={this.state.result}
+            />
 
         </div>
       </div>
