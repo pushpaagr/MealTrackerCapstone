@@ -20,39 +20,43 @@ import com.google.firebase.cloud.FirestoreClient;
 
 @SpringBootApplication
 public class MealtrackerApi2Application {
-	
+
 	static Firestore db;
 
 	public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
 		InputStream accessKey = MealtrackerApi2Application.class.getResourceAsStream("firebasejson.json"); 
-			
+
 		FirebaseOptions options = new FirebaseOptions.Builder()
-		    .setCredentials(GoogleCredentials.fromStream(accessKey))
-		    .setProjectId("mealplannercapst-1546462212187")
-		    .setDatabaseUrl("https://mealplannercapst-1546462212187.firebaseio.com")
-		    .build();
+				.setCredentials(GoogleCredentials.fromStream(accessKey))
+				.setProjectId("mealplannercapst-1546462212187")
+				.setDatabaseUrl("https://mealplannercapst-1546462212187.firebaseio.com")
+				.build();
 		FirebaseApp.initializeApp(options);
-		
-		
+
+
 		MealtrackerApi2Application.db = FirestoreClient.getFirestore();
-		
-		
-//		
+
+
+				
 //		// Create a reference to the cities collection
 //		CollectionReference image = MealtrackerApi2Application.db.collection("mealtracker");
 //		// Create a query against the collection.
-//		Query query = image.whereEqualTo("image", "blah");
+//		Query query = image.whereEqualTo("useruid", "tCWu4z6FqAMuu7B9eveTUOrsFF03");
 //		// retrieve  query results asynchronously using query.get()
 //		ApiFuture<QuerySnapshot> querySnapshot = query.get();
 //
 //		for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-//		  System.out.println(document.getId());
+//			System.out.println(document.getData());
 //		}
 //		System.out.println("done");
-//		
-////		System.out.println(db.collection("mealtracker").document("CHDz7asKyqBIm0mqtY2T").get().get().get("image"));
+//
+//		//		once you know the document id can retrieve any items except for arrays
+//		System.out.println(db.collection("mealtracker").document("1qVToI8CobkR3gVEaRQq").get().get().get("1qVToI8CobkR3gVEaRQq"));
 //		System.exit(0);
-//		
+//		//		
+
+
+
 		SpringApplication.run(MealtrackerApi2Application.class, args);
 	}
 

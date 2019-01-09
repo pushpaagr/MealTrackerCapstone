@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,26 +41,26 @@ import com.google.cloud.firestore.WriteResult;
 
 @RestController
 public class RecipeController {
-	
+
 	@Component
 	public class CorsFilter extends OncePerRequestFilter {
 
-	    @Override
-	    protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
-	                                    final FilterChain filterChain) throws ServletException, IOException {
-	        response.addHeader("Access-Control-Allow-Origin", "*");
-	        response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, HEAD, OPTIONS");
-	        response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
-	        response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials");
-	        response.addHeader("Access-Control-Allow-Credentials", "true");
-	        response.addIntHeader("Access-Control-Max-Age", 10);
-	        filterChain.doFilter(request, response);
-	    }
+		@Override
+		protected void doFilterInternal(final HttpServletRequest request, final HttpServletResponse response,
+				final FilterChain filterChain) throws ServletException, IOException {
+			response.addHeader("Access-Control-Allow-Origin", "*");
+			response.addHeader("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, PATCH, HEAD, OPTIONS");
+			response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers");
+			response.addHeader("Access-Control-Expose-Headers", "Access-Control-Allow-Origin, Access-Control-Allow-Credentials");
+			response.addHeader("Access-Control-Allow-Credentials", "true");
+			response.addIntHeader("Access-Control-Max-Age", 10);
+			filterChain.doFilter(request, response);
+		}
 	}
-	
-	
-	
-	
+
+
+
+
 
 	JerseyClient client = JerseyClientBuilder.createClient();
 
@@ -77,7 +78,7 @@ public class RecipeController {
 	}
 
 	@RequestMapping(value = "/addrecipe", method = RequestMethod.POST)
-	public String addRecipe(@RequestParam(value = "id") String id)
+	public String addRecipe(@RequestParam(value = "id") String id, @RequestParam(value = "useruid") String useruid)
 			throws UnsupportedEncodingException, InterruptedException, ExecutionException {
 		id = URLEncoder.encode(id, "UTF-8");
 		String url = "https://api.edamam.com/search?app_id=9ec67616&app_key=b72cb771686e21c301a08adc32727f23&r=" + id;
@@ -105,6 +106,7 @@ public class RecipeController {
 		data.put("url", url);
 		data.put("healthLables", healthLabels);
 		data.put("ingredients", ingredients);
+		data.put("useruid", useruid);
 
 		DocumentReference docRef = MealtrackerApi2Application.db.collection("mealtracker").document();
 
@@ -114,6 +116,26 @@ public class RecipeController {
 		return result.get().getUpdateTime().toString();
 
 	}
+
+
+	@RequestMapping(value = "/myrecipes", method = RequestMethod.GET)
+	public List<Map<String, Object>> getMyRecipes(@RequestParam(value = "useruid") String useruid) throws InterruptedException, ExecutionException {
+		CollectionReference database = MealtrackerApi2Application.db.collection("mealtracker");
+		Query query = database.whereEqualTo("useruid", useruid);
+
+		ApiFuture<QuerySnapshot> querySnapshot = query.get();
+
+		List<Map<String, Object>> myList = new ArrayList<>();
+
+		for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
+			myList.add(document.getData());
+		}
+
+
+
+		return myList;
+	}
+
 
 	@RequestMapping(value = "/recipe", method = RequestMethod.DELETE)
 	public String deleteRecipe(@RequestParam(value = "id") String id) {
