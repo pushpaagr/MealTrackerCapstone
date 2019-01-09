@@ -2,22 +2,57 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Home from './Home';
 import Recipes from './Recipes';
+import firebase, { auth, provider } from '../firebase.js';
+
 
 
 class Dashboard extends Component {
   constructor() {
     super();
+    this.login = this.login.bind(this); // <-- add this line
+    this.logout = this.logout.bind(this); // <-- add this line
 
     this.state = {
       message: "",
       LoginStatus: false,
       result: [],
       query: "",
+      user: null // <-- add this line
+
     }
   }
 
+  componentDidMount() {
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        this.setState({ user });
+        console.log(this.state.user.email);
+      }
+    });
+  }
+
+  login() {
+    auth.signInWithPopup(provider)
+    .then((result) => {
+      const user = result.user;
+      this.setState({
+        user
+      });
+    });
+  }
+
+  logout() {
+    auth.signOut()
+    .then(() => {
+      this.setState({
+        user: null
+      });
+    });
+  }
+
+
   searchRecipes = () => {
-  const url = `http://localhost:8080/search?ingredients=${this.state.query}`
+    const url = `http://localhost:8080/search?ingredients=${this.state.query}`
 
     axios.get(url)
     .then((response) => {
@@ -59,6 +94,14 @@ class Dashboard extends Component {
               </label>
               <input type="submit" value="Submit" />
             </form>
+            <div className="wrapper">
+              {this.state.user ?
+                <button onClick={this.logout}>Log Out</button>
+                :
+                <button onClick={this.login}>Log In</button>
+              }
+            </div>
+
           </nav>
 
           <Recipes
