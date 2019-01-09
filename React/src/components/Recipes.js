@@ -9,7 +9,6 @@ class Recipes extends Component {
 
 
   render() {
-    console.log(this.props.useruid);
 
     const RecipeList = this.props.recipeList.map((recipe, i) => {
       return (<Recipe
