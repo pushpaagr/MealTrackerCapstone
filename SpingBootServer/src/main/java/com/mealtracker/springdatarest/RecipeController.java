@@ -131,8 +131,6 @@ public class RecipeController {
 			myList.add(document.getData());
 		}
 
-
-
 		return myList;
 	}
 
