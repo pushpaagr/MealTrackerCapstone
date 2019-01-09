@@ -17,7 +17,7 @@ class Dashboard extends Component {
       LoginStatus: false,
       result: [],
       query: "",
-      user: null // <-- add this line
+      user: null,
 
     }
   }
@@ -26,7 +26,7 @@ class Dashboard extends Component {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({ user });
-        console.log(this.state.user.email);
+        // console.log(this.state.user.uid);
       }
     });
   }
@@ -103,9 +103,10 @@ class Dashboard extends Component {
             </div>
 
           </nav>
-
           <Recipes
             recipeList={this.state.result}
+            useruid={this.state.user ? this.state.user.uid : null
+            }
             />
 
         </div>

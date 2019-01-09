@@ -7,14 +7,20 @@ import axios from 'axios';
 
 class Recipe extends Component {
 
+
+
   addRecipeActionCallback = () => {
+    console.log(this.props.useruid);
+
+
     let id = this.props.recipe.uri
     id = encodeURIComponent(id);
-    let url = `http://localhost:8080/addrecipe?id=${id}`
+    let url = `http://localhost:8080/addrecipe?id=${id}&useruid=${this.props.useruid}`
 
     axios.post(url)
     .then((response) => {
       console.log(response);
+      // console.log(this.props.useruid);
     })
     .catch((error) => {
       this.setState({
@@ -31,7 +37,7 @@ class Recipe extends Component {
   render () {
 
     const {recipe} = this.props;
-
+    console.log(recipe);
     const ingredients = recipe.ingredients.map((item, i) => {
       return (
         item.text
@@ -61,6 +67,7 @@ class Recipe extends Component {
 }
 Recipe.propTypes = {
   label: PropTypes.string
+
 };
 
 
