@@ -94,7 +94,7 @@ public class RecipeController {
 
 		String image = jsonArray.getJSONObject(0).getString("image");
 
-		String recipeUrl = jsonArray.getJSONObject(0).getString("url");
+		String recipeurl = jsonArray.getJSONObject(0).getString("url");
 
 		List<Object> healthLabels = jsonArray.getJSONObject(0).getJSONArray("healthLabels").toList();
 
@@ -103,7 +103,7 @@ public class RecipeController {
 		Map<String, Object> data = new HashMap<>();
 		data.put("label", label);
 		data.put("image", image);
-		data.put("url", url);
+		data.put("url", recipeurl);
 		data.put("healthLables", healthLabels);
 		data.put("ingredients", ingredients);
 		data.put("useruid", useruid);
@@ -130,6 +130,8 @@ public class RecipeController {
 		for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
 			myList.add(document.getData());
 		}
+
+
 
 		return myList;
 	}
