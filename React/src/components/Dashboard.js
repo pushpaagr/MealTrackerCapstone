@@ -2,7 +2,10 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Home from './Home';
 import Recipes from './Recipes';
-import Myrecipes from './Myrecipes';
+// import Myrecipes from './Myrecipes';
+import Details from './Details';
+
+import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
 import firebase, { auth, provider } from '../firebase.js';
 
@@ -15,11 +18,11 @@ class Dashboard extends Component {
 
     this.state = {
       message: "",
-      LoginStatus: false,
       result: [],
-      myrecipes: [],
       query: "",
       user: null,
+      detailRecipe: "",
+      searchbool: false,
 
     }
   }
@@ -29,6 +32,7 @@ class Dashboard extends Component {
     event.preventDefault();
     this.setState({
       query: '',
+      result: []
     });
     this.searchRecipes();
   }
@@ -44,8 +48,6 @@ class Dashboard extends Component {
       }
     });
   }
-
-
 
   login() {
     auth.signInWithPopup(provider)
@@ -68,15 +70,12 @@ class Dashboard extends Component {
 
   searchRecipes = () => {
     const url = `http://localhost:8080/search?ingredients=${this.state.query}`
-
     axios.get(url)
     .then((response) => {
       this.setState({
         result: response.data.hits,
-        myrecipes: []
-
+        searchbool: true,
       });
-
     })
     .catch((error) => {
       this.setState({
@@ -87,18 +86,14 @@ class Dashboard extends Component {
 
   };
 
-  // http://localhost:8080/myrecipes?useruid=tCWu4z6FqAMuu7B9eveTUOrsFF03
-
   myrecipes = () => {
-
     const url = `http://localhost:8080/myrecipes?useruid=${this.state.user.uid}`
-
     axios.get(url)
     .then((response) => {
-      console.log(response.data);
       this.setState({
-        myrecipes: response.data,
-        result: []
+        result: response.data,
+        searchbool: false,
+
       })
     })
     .catch((error) => {
@@ -106,55 +101,71 @@ class Dashboard extends Component {
         error
       });
     })
-
   }
 
-
+  recipeDetail = (recipe) => {
+    this.setState({
+      detailRecipe: recipe,
+      result: []
+    })
+    console.log(this.state.detailRecipe);
+  }
 
   render() {
     return(
-      <div>
+      <Router>
         <div>
-          <nav className="nav-list_container">
-            <form onSubmit={this.onFormSubmit}>
-              <label>
-                Search Recipes:
-                <input type="text" value={this.state.query} onChange={this.handleChange} />
-              </label>
-              <input type="submit" value="Submit" />
-            </form>
-            <div className="wrapper">
-              {this.state.user ?
-                <button onClick={this.logout}>Log Out</button>
-                :
-                <button onClick={this.login}>Log In</button>
-              }
+          <div>
+            <nav className="nav-list_container">
+              <Link to="/"  className="dashboard-link">Home</Link>
+              <form onSubmit={this.onFormSubmit}>
+                <label>
+                  Search Recipes:
+                  <input type="text" value={this.state.query} onChange={this.handleChange} />
+                </label>
+                <input type="submit" value="Submit" />
+              </form>
+              <div className="wrapper">
+                {this.state.user ?
+                  <button onClick={this.logout}>Log Out</button>
+                  :
+                  <button onClick={this.login}>Log In</button>
+                }
+              </div>
+              <div>
+                {this.state.user ?
+                  <button onClick={this.myrecipes}><Link to="/myaccount/" className="dashboard-link">My Account
+                  </Link></button>
+                  :
+                  <p></p>
+                }
+              </div>
+
+            </nav>
+
+            <Route path="/" exact component={Home} />
+
+            <Recipes
+              recipeList={this.state.result}
+              useruid={this.state.user ? this.state.user.uid : null}
+              recipeDetailCallback={(recipe) => this.recipeDetail(recipe)}
+              searchbool={this.state.searchbool}
+              />
+
+            <Route path="/myaccount/" render={() => <Recipes
+                recipeList={this.state.result} />} />
+
+              <Details detailRecipe={this.state.detailRecipe}
+                searchbool={this.state.searchbool}
+                />
+
             </div>
+          </div>
+        </Router>
+      )
+    }
 
 
-            <div>
-              {this.state.user ?
-                <button onClick={this.myrecipes}>My Account</button>
-                :
-                <p></p>
-              }
-            </div>
-
-          </nav>
-          <Recipes
-            recipeList={this.state.result}
-            useruid={this.state.user ? this.state.user.uid : null
-            }/>
-
-          <Myrecipes
-            myrecipes={this.state.myrecipes} />
-
-        </div>
-      </div>
-    )
   }
 
-
-}
-
-export default Dashboard;
+  export default Dashboard;
