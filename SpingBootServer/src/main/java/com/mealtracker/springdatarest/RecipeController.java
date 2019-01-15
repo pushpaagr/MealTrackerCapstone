@@ -104,7 +104,7 @@ public class RecipeController {
 		data.put("label", label);
 		data.put("image", image);
 		data.put("url", recipeurl);
-		data.put("healthLables", healthLabels);
+		data.put("healthLabels", healthLabels);
 		data.put("ingredients", ingredients);
 		data.put("useruid", useruid);
 
@@ -128,18 +128,31 @@ public class RecipeController {
 		List<Map<String, Object>> myList = new ArrayList<>();
 
 		for (DocumentSnapshot document : querySnapshot.get().getDocuments()) {
-			myList.add(document.getData());
+			Map<String,Object>data=document.getData();
+
+			data.put("documentid", document.getId());
+			myList.add(data);
 		}
-
-
 
 		return myList;
 	}
 
 
+
+
+
+
+
+
 	@RequestMapping(value = "/recipe", method = RequestMethod.DELETE)
-	public String deleteRecipe(@RequestParam(value = "id") String id) {
-		return "blah";
+	public String deleteRecipe(@RequestParam(value = "documentid") String documentid) throws InterruptedException, ExecutionException {
+		ApiFuture<WriteResult> writeResult = MealtrackerApi2Application.db.collection("mealtracker").document(documentid).delete();
+
+		writeResult.get().getUpdateTime();
+
+		return "Successfully delted";
 	}
+
+
 
 }
