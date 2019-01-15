@@ -74,7 +74,18 @@ class Dashboard extends Component {
     .then(() => {
       this.setState({
         user: null,
+        myaccountrecipedetail: false,
+        message: "",
+        result: [],
+        query: "",
+        detailRecipe: "",
+        seedetail: false,
+        searchrecipe: false,
+        myrecipe: false,
+        showhome: false,
+        indatabase: false,
       });
+      console.log(this.state.message);
     });
   }
 
@@ -150,8 +161,6 @@ class Dashboard extends Component {
       });
     });
 
-    console.log("in delte recipe");
-    console.log(recipe.documentid);
   }
 
 
@@ -187,7 +196,6 @@ class Dashboard extends Component {
       myrecipe: false,
 
     })
-    console.log(this.state.detailRecipe);
   }
 
   showhome = () => {

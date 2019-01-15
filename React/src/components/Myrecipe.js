@@ -5,8 +5,6 @@ class Myrecipe extends Component {
 
 
   render() {
-    console.log("in the myrecipe.js");
-    console.log(this.props);
     return (
       <div className="recipe-container">
         <div className="item-list_container">

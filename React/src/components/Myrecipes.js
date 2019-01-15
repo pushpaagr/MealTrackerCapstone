@@ -6,7 +6,6 @@ import Myrecipe from './Myrecipe'
 class Myrecipes extends Component {
 
   render() {
-    console.log("in myrecipes");
     const RecipeList = this.props.myrecipes.map((recipe, i) => {
       return (<Myrecipe
         key={i}
