@@ -33,7 +33,7 @@ console.log(this.props.notadded);
             <li>Ingredients: {ingredients ? ingredients : "None"}</li>
             <li>healthLabels: {healthLabels}</li>
             <div>
-              {(this.props.user && this.props.indatabase) ? <button onClick={() => this.props.addRecipeActionCallback(this.props.detailRecipe)}>Add Recipe</button> :  null }
+              {((this.props.user && this.props.myaccountrecipedetail)) ? null : <button onClick={() => this.props.addRecipeActionCallback(this.props.detailRecipe)}>Add Recipe</button>}
             </div>
           </ul>
         </div>
