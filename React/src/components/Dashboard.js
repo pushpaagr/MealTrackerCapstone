@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import firebase, { auth, provider } from '../firebase.js';
 import axios from 'axios';
 import Home from './Home';
 import Recipes from './Recipes';
@@ -7,7 +8,6 @@ import Details from './Details';
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
-import firebase, { auth, provider } from '../firebase.js';
 
 
 class Dashboard extends Component {
