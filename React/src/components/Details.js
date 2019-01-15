@@ -5,10 +5,7 @@ import PropTypes from 'prop-types';
 class Details extends Component {
 
 
-
-
   render() {
-console.log(this.props.notadded);
 
     if (this.props.detailRecipe) {
       const ingredients = this.props.detailRecipe.ingredients.map((item, i) => {

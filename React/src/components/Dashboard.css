@@ -1,8 +1,20 @@
-.Navbar-div {
-  border: pink;
+.navbar-navbar{
+  /* border: 2px solid green; */
 }
 
-Navbar {
-  border: 2px solid red;
+
+.navbar-buttons {
+  display:flex;
+  /* border: 2px solid pink; */
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+
+
+.div-outer-nav {
+  /* border: 2px solid red; */
 
 }

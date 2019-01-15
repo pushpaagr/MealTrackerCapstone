@@ -5,9 +5,9 @@ import Home from './Home';
 import Recipes from './Recipes';
 import Myrecipes from './Myrecipes';
 import Details from './Details';
-import './Dashboard.css'
+import './Dashboard.css';
 
-import { Navbar,FormGroup, FormControl, Button } from 'react-bootstrap';
+import { Navbar,FormGroup, FormControl, Button, ButtonToolbar } from 'react-bootstrap';
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
 
@@ -41,7 +41,7 @@ class Dashboard extends Component {
       query: '',
       result: [],
       searchrecipe: true,
-      myaccountrecipedetail: false, 
+      myaccountrecipedetail: false,
     });
     this.searchRecipes();
   }
@@ -207,37 +207,44 @@ class Dashboard extends Component {
     return(
       <Router>
         <div>
-          <div>
-            <Navbar>
-              <div className="Navbar-div">
-                <button onClick={this.showhome}><Link to="/">Home
-                </Link></button>
-
-                <form onSubmit={this.onFormSubmit}>
-                  <label>
-                    Search Recipes:
-                    <input type="text" value={this.state.query} onChange={this.handleChange} />
-                  </label>
-                  <input type="submit" value="Submit" />
-                </form>
-                <div className="wrapper">
+          <div className="div-outer-nav">
+            <Navbar className="navbar-navbar">
+              <ButtonToolbar className="navbar-buttons">
+                <div>
+                  <form onSubmit={this.onFormSubmit}>
+                    <label>
+                      Search Recipes:
+                      <input type="text" value={this.state.query} onChange={this.handleChange} />
+                    </label>
+                    <input type="submit" value="Submit" />
+                  </form>
+                </div>
+                <div>
                   {this.state.user ?
-                    <button onClick={this.logout}>Log Out</button>
+                    <Button onClick={this.logout}>Log Out</Button>
                     :
-                    <button onClick={this.login}>Log In</button>
+                    <Button onClick={this.login}>Log In</Button>
                   }
                 </div>
                 <div>
                   {this.state.user ?
-                    <button onClick={this.myrecipes}><Link to="/myaccount/" className="dashboard-link">My Account
-                    </Link></button>
+                    <Button onClick={this.myrecipes}><Link to="/myaccount/" className="dashboard-link">My Account
+                    </Link></Button>
                     :
                     <p></p>
                   }
                 </div>
+                <div>
+                  <Button onClick={this.showhome}><Link to="/">Home
+                  </Link></Button>
               </div>
-
+              </ButtonToolbar>
             </Navbar>
+
+
+
+
+
 
             <div>
               <p className={"status-bar__text"}>{this.state.message}</p>
@@ -269,8 +276,6 @@ class Dashboard extends Component {
                 myaccountrecipedetail={this.state.myaccountrecipedetail}
                 addRecipeActionCallback={(recipe) => this.addRecipe(recipe)}
                 /> : null}
-
-
               </div>
             </div>
           </Router>
