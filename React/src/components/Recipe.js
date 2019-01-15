@@ -7,22 +7,6 @@ import axios from 'axios';
 
 class Recipe extends Component {
 
-  addRecipeActionCallback = () => {
-    let id = this.props.uri
-    id = encodeURIComponent(id);
-    let url = `http://localhost:8080/addrecipe?id=${id}&useruid=${this.props.useruid}`
-
-    axios.post(url)
-    .then((response) => {
-      console.log(response);
-    })
-    .catch((error) => {
-      this.setState({
-        error: error,
-      });
-    });
-
-  };
 
   render () {
     return(
@@ -30,14 +14,14 @@ class Recipe extends Component {
         <ul className="recipe-items">
           <li>{this.props.label}</li>
           <li><img src={this.props.image} alt=''/></li>
-
           <li>
-            {this.props.searchbool ?
+            {this.props.user ?
               <button
-                onClick={this.addRecipeActionCallback}
+                onClick={() => this.props.addRecipeActionCallback()}
                 className="item__button">Add to Calendar</button> :
                 <p></p> }
                 </li>
+
                 <li><button  onClick={() => this.props.recipeDetailCallback()}>Recipe Details </button></li>
               </ul>
             </div>

@@ -4,21 +4,19 @@ import PropTypes from 'prop-types';
 
 class Details extends Component {
 
+
+
+
   render() {
+console.log(this.props.notadded);
 
     if (this.props.detailRecipe) {
-      console.log("in details component");
-      console.log(this.props.detailRecipe);
-
-
-
       const ingredients = this.props.detailRecipe.ingredients.map((item, i) => {
         return (
           item.text
         )
       })
 
-      console.log(this.props.detailRecipe);
 
       const healthLabels = this.props.detailRecipe.healthLabels.map((item, i) => {
         return (
@@ -34,6 +32,9 @@ class Details extends Component {
             <li>UrL: {this.props.detailRecipe.url}</li>
             <li>Ingredients: {ingredients ? ingredients : "None"}</li>
             <li>healthLabels: {healthLabels}</li>
+            <div>
+              {(this.props.user && this.props.indatabase) ? <button onClick={() => this.props.addRecipeActionCallback(this.props.detailRecipe)}>Add Recipe</button> :  null }
+            </div>
           </ul>
         </div>
       )

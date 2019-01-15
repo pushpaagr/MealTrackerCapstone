@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import Home from './Home';
 import Recipes from './Recipes';
-// import Myrecipes from './Myrecipes';
+import Myrecipes from './Myrecipes';
 import Details from './Details';
 
 import { BrowserRouter as Router, Route, Link } from "react-router-dom";
@@ -22,8 +22,11 @@ class Dashboard extends Component {
       query: "",
       user: null,
       detailRecipe: "",
-      searchbool: false,
-
+      seedetail: false,
+      searchrecipe: false,
+      myrecipe: false,
+      showhome: false,
+      indatabase: false,
     }
   }
 
@@ -32,7 +35,8 @@ class Dashboard extends Component {
     event.preventDefault();
     this.setState({
       query: '',
-      result: []
+      result: [],
+      searchrecipe: true,
     });
     this.searchRecipes();
   }
@@ -44,7 +48,7 @@ class Dashboard extends Component {
     auth.onAuthStateChanged((user) => {
       if (user) {
         this.setState({ user });
-
+        this.setState({message: `Welcome Back ${this.state.user.displayName}`})
       }
     });
   }
@@ -54,7 +58,8 @@ class Dashboard extends Component {
     .then((result) => {
       const user = result.user;
       this.setState({
-        user
+        user: user,
+
       });
     });
   }
@@ -63,18 +68,31 @@ class Dashboard extends Component {
     auth.signOut()
     .then(() => {
       this.setState({
-        user: null
+        user: null,
       });
     });
   }
 
   searchRecipes = () => {
+    const searchterm = this.state.query
     const url = `http://localhost:8080/search?ingredients=${this.state.query}`
+
+    this.setState({
+      result: [],
+      showhome: false,
+      query: "",
+      detailRecipe: "",
+      seedetail: false,
+      myrecipe: false,
+    });
+
+
     axios.get(url)
     .then((response) => {
       this.setState({
         result: response.data.hits,
-        searchbool: true,
+        message: `Loading search for ${searchterm}`,
+        searchrecipe: true,
       });
     })
     .catch((error) => {
@@ -83,17 +101,69 @@ class Dashboard extends Component {
       });
     })
 
+  };
+
+
+  addRecipe = (recipe) => {
+
+    let id = recipe.uri
+    id = encodeURIComponent(id);
+    let url = `http://localhost:8080/addrecipe?id=${id}&useruid=${this.state.user.uid}`
+
+    axios.post(url)
+    .then((response) => {
+      this.setState({
+        message: `Successfully added ${recipe.label}`,
+        showhome: false,
+        indatabase: true,
+      })
+    })
+    .catch((error) => {
+      this.setState({
+        error: error,
+      });
+    });
 
   };
 
+
+
+
+  deleteRecipe = (recipe) => {
+
+    let url = `http://localhost:8080/recipe?documentid=${recipe.documentid}`
+
+    axios.delete(url)
+    .then((response) => {
+      this.setState({
+        message: `Successfully delted ${recipe.label}`,
+        result: [],
+      })
+    })
+    .catch((error) => {
+      this.setState({
+        error: error,
+      });
+    });
+
+    console.log("in delte recipe");
+    console.log(recipe.documentid);
+  }
+
+
+
+
   myrecipes = () => {
+
     const url = `http://localhost:8080/myrecipes?useruid=${this.state.user.uid}`
     axios.get(url)
     .then((response) => {
       this.setState({
         result: response.data,
-        searchbool: false,
-
+        myrecipe: true,
+        seedetail: false,
+        searchrecipe: false,
+        showhome: false,
       })
     })
     .catch((error) => {
@@ -106,9 +176,26 @@ class Dashboard extends Component {
   recipeDetail = (recipe) => {
     this.setState({
       detailRecipe: recipe,
-      result: []
+      seedetail: true,
+      result: [],
+      showhome: false,
+      myrecipe: false,
+
     })
     console.log(this.state.detailRecipe);
+  }
+
+  showhome = () => {
+    this.setState({
+      showhome: true,
+      message: "",
+      result: [],
+      query: "",
+      detailRecipe: "",
+      seedetail: false,
+      searchrecipe: false,
+      myrecipe: false,
+    })
   }
 
   render() {
@@ -117,7 +204,9 @@ class Dashboard extends Component {
         <div>
           <div>
             <nav className="nav-list_container">
-              <Link to="/"  className="dashboard-link">Home</Link>
+              <button onClick={this.showhome}><Link to="/">Home
+              </Link></button>
+
               <form onSubmit={this.onFormSubmit}>
                 <label>
                   Search Recipes:
@@ -143,29 +232,44 @@ class Dashboard extends Component {
 
             </nav>
 
-            <Route path="/" exact component={Home} />
+            <div>
+              <p className={"status-bar__text"}>{this.state.message}</p>
+            </div>
 
-            <Recipes
+            {this.state.showhome ?   <Route path="/" exact component={Home} />: null}
+
+
+
+            {this.state.searchrecipe ? <Recipes
               recipeList={this.state.result}
               useruid={this.state.user ? this.state.user.uid : null}
               recipeDetailCallback={(recipe) => this.recipeDetail(recipe)}
-              searchbool={this.state.searchbool}
-              />
+              user={this.state.user}
+              addRecipeActionCallback={(recipe) => this.addRecipe(recipe)}
+              /> : null}
 
-            <Route path="/myaccount/" render={() => <Recipes
-                recipeList={this.state.result} />} />
 
-              <Details detailRecipe={this.state.detailRecipe}
-                searchbool={this.state.searchbool}
-                />
+              {this.state.myrecipe ?   <Route path="/myaccount/" render={() => <Myrecipes
+                myrecipes={this.state.result}
+                deleteRecipeCallback={(recipe) => this.deleteRecipe(recipe)}
+                recipeDetailCallback={(recipe) => this.recipeDetail(recipe)}
+                />} /> : null }
 
+                {this.state.seedetail ? <Details detailRecipe={this.state.detailRecipe}
+                user={this.state.user}
+                myrecipe={this.state.myrecipe}
+                indatabase={this.state.indatabase}
+                addRecipeActionCallback={(recipe) => this.addRecipe(recipe)}
+                /> : null}
+
+
+              </div>
             </div>
-          </div>
-        </Router>
-      )
+          </Router>
+        )
+      }
+
+
     }
 
-
-  }
-
-  export default Dashboard;
+    export default Dashboard;
